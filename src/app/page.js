@@ -32,7 +32,7 @@ export default function Home() {
     }
   }
 
-  async function loadWeatherForCoordinates(latitude, longitude) {
+  async function loadWeatherForCoordinates(latitude, longitude, displayLabel = "") {
     setLoading(true);
     setError("");
 
@@ -46,7 +46,18 @@ export default function Home() {
         throw new Error(data?.error || data?.message || "Unable to load weather data");
       }
 
-      setWeather(data);
+      setWeather(
+        displayLabel
+          ? {
+              ...data,
+              location: {
+                ...data.location,
+                name: displayLabel,
+                displayLabel,
+              },
+            }
+          : data
+      );
     } catch (requestError) {
       setWeather(null);
       setError(requestError.message);
@@ -60,9 +71,9 @@ export default function Home() {
       <section className="hero-panel">
         <div className="hero-copy">
           <p className="eyebrow">Open-Meteo powered</p>
-          <h1>Find weather for any place, fast.</h1>
+          <h1>Weather for places you actually search.</h1>
           <p className="hero-text">
-            Search a city, town, or postcode and get current conditions plus a 5 day forecast in a polished dashboard.
+            Search a country, state, district, city, or town and get current conditions plus a 5 day forecast in a polished dashboard.
           </p>
         </div>
 

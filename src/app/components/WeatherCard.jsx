@@ -1,9 +1,13 @@
 "use client";
 
 import "./WeatherCard.css";
-import { getWeatherLabel, getWeatherSummary } from "../services/weatherApi";
+import { getWeatherLabel, getWeatherSummary, getWeatherTheme } from "../services/weatherApi";
 
 function formatLocation(location) {
+  if (location?.displayLabel) {
+    return location.displayLabel;
+  }
+
   return [location?.name, location?.admin1, location?.country].filter(Boolean).join(", ");
 }
 
@@ -38,6 +42,7 @@ export default function WeatherCard({ weather, loading }) {
   }
 
   const { location, current, daily } = weather;
+  const themeClass = `weather-card theme-${getWeatherTheme(current.weatherCode)}`;
   const forecastDays = daily.time.map((dateValue, index) => ({
     date: dateValue,
     code: daily.weatherCode[index],
@@ -49,9 +54,11 @@ export default function WeatherCard({ weather, loading }) {
   }));
 
   return (
-    <section className="weather-card">
+    <section className={themeClass}>
+      <div className="weather-card-topline" />
       <div className="weather-hero">
         <div>
+          <p className="eyebrow">Live conditions</p>
           <p className="city-name">{formatLocation(location)}</p>
           <p className="condition">{getWeatherLabel(current.weatherCode)}</p>
           <p className="subtle-copy">{getWeatherSummary(current.weatherCode)}</p>
@@ -60,6 +67,7 @@ export default function WeatherCard({ weather, loading }) {
         <div className="temperature-block">
           <h2 className="temperature">{Math.round(current.temperature)}°</h2>
           <p className="feels-like">Feels like {Math.round(current.apparentTemperature)}°</p>
+          <p className="small-meta">Updated {current.time ? new Date(current.time).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "now"}</p>
         </div>
       </div>
 
@@ -86,7 +94,7 @@ export default function WeatherCard({ weather, loading }) {
         <div className="forecast-heading">
           <div>
             <h3>5 day forecast</h3>
-            <p>Daily highs, lows, and precipitation chances.</p>
+            <p>Daily highs, lows, and precipitation outlook.</p>
           </div>
         </div>
 

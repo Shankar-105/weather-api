@@ -1,21 +1,57 @@
 .weather-card {
+  position: relative;
   width: 100%;
   max-width: 1180px;
-  border-radius: 32px;
-  padding: 1.5rem;
-  background: rgba(8, 12, 22, 0.7);
+  overflow: hidden;
+  border-radius: 34px;
+  padding: 1.35rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(18px);
-  color: #f4f7fb;
-  box-shadow: 0 30px 80px rgba(2, 6, 23, 0.36);
+  box-shadow: 0 32px 80px rgba(2, 6, 23, 0.34);
+  color: #f6f8fb;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 24%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.94), rgba(8, 12, 22, 0.96));
+}
+
+.weather-card-topline {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, #7ee2ff, #8dffcf, #ffd37e);
+  opacity: 0.9;
+}
+
+.theme-sunny .weather-card-topline {
+  background: linear-gradient(90deg, #ffe18a, #ffb84d, #ff8c4a);
+}
+
+.theme-cloudy .weather-card-topline {
+  background: linear-gradient(90deg, #8ec5ff, #6f92ff, #8ba5c9);
+}
+
+.theme-rainy .weather-card-topline {
+  background: linear-gradient(90deg, #86d5ff, #63a6ff, #4b7cff);
+}
+
+.theme-snowy .weather-card-topline {
+  background: linear-gradient(90deg, #d7f0ff, #8bd6ff, #d8e8ff);
+}
+
+.theme-stormy .weather-card-topline {
+  background: linear-gradient(90deg, #8f9bff, #6d6cdb, #2fd3c7);
+}
+
+.theme-foggy .weather-card-topline {
+  background: linear-gradient(90deg, #c6d0dd, #90a0b5, #71839a);
 }
 
 .weather-card.empty {
   min-height: 280px;
   display: grid;
   place-items: center;
+  color: rgba(246, 248, 251, 0.72);
   font-size: 1rem;
-  color: rgba(244, 247, 251, 0.72);
 }
 
 .loading-state {
@@ -24,41 +60,50 @@
 }
 
 .weather-hero {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(240px, 0.85fr);
   gap: 1rem;
   align-items: end;
-  padding: 0.5rem 0.5rem 1.25rem;
+  padding: 0.4rem 0.4rem 1.1rem;
 }
 
 .city-name {
-  font-size: clamp(1.4rem, 2vw, 2.15rem);
+  font-size: clamp(1.5rem, 2.1vw, 2.3rem);
   font-weight: 700;
-  margin-bottom: 0.45rem;
+  letter-spacing: -0.04em;
+  margin-top: 0.25rem;
+  margin-bottom: 0.35rem;
 }
 
 .condition {
-  font-size: 1rem;
+  font-size: 1.05rem;
+  color: rgba(246, 248, 251, 0.9);
   text-transform: capitalize;
-  color: rgba(244, 247, 251, 0.88);
   margin-bottom: 0.25rem;
 }
 
 .subtle-copy,
-.feels-like {
+.feels-like,
+.small-meta,
+.stat-card span,
+.forecast-card p,
+.forecast-heading p {
+  color: rgba(246, 248, 251, 0.66);
   font-size: 0.92rem;
-  color: rgba(244, 247, 251, 0.66);
 }
 
 .temperature-block {
   text-align: right;
+  display: grid;
+  gap: 0.2rem;
+  justify-items: end;
 }
 
 .temperature {
-  font-size: clamp(3.4rem, 7vw, 6.5rem);
-  line-height: 0.9;
+  font-size: clamp(3.8rem, 8vw, 6.8rem);
+  line-height: 0.88;
   font-weight: 700;
-  letter-spacing: -0.06em;
+  letter-spacing: -0.08em;
 }
 
 .stats-grid {
@@ -70,9 +115,9 @@
 
 .stat-card,
 .forecast-card {
-  background: rgba(255, 255, 255, 0.04);
+  border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .stat-card {
@@ -81,19 +126,12 @@
   gap: 0.35rem;
 }
 
-.stat-card span,
-.forecast-card p,
-.forecast-heading p {
-  color: rgba(244, 247, 251, 0.64);
-  font-size: 0.92rem;
-}
-
 .stat-card strong {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
 }
 
 .forecast-section {
-  padding-top: 0.25rem;
+  padding-top: 0.1rem;
 }
 
 .forecast-heading {
@@ -105,7 +143,7 @@
 }
 
 .forecast-heading h3 {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 .forecast-grid {
@@ -121,20 +159,21 @@
 }
 
 .forecast-day {
-  color: rgba(244, 247, 251, 0.74);
-  font-size: 0.88rem;
+  color: rgba(246, 248, 251, 0.78);
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
 }
 
 .forecast-code {
-  font-size: 1rem;
+  font-size: 0.98rem;
 }
 
 .forecast-temps {
   display: flex;
   gap: 0.75rem;
-  font-size: 1.2rem;
+  align-items: baseline;
+  font-size: 1.15rem;
   font-weight: 700;
 }
 
@@ -164,26 +203,28 @@
 }
 
 @media (max-width: 960px) {
-  .stats-grid,
-  .forecast-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .weather-hero,
   .forecast-heading {
+    grid-template-columns: 1fr;
     align-items: start;
     flex-direction: column;
   }
 
   .temperature-block {
+    justify-items: start;
     text-align: left;
+  }
+
+  .stats-grid,
+  .forecast-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 640px) {
   .weather-card {
     padding: 1rem;
-    border-radius: 24px;
+    border-radius: 26px;
   }
 
   .stats-grid,

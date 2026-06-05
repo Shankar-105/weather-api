@@ -59,7 +59,7 @@ export default function SearchBar({ onSearch, onUseLocation, loading, error }) {
 
   function handleUseLocation() {
     if (!navigator.geolocation) {
-      setHelperMessage("Geolocation is not available in this browser.");
+      setHelperMessage("Your browser does not support location sharing.");
       return;
     }
 
@@ -68,7 +68,7 @@ export default function SearchBar({ onSearch, onUseLocation, loading, error }) {
         onUseLocation(position.coords.latitude, position.coords.longitude);
       },
       () => {
-        setHelperMessage("Location access was blocked or unavailable.");
+        setHelperMessage("Allow location access in the browser prompt to use your current position.");
       },
       {
         enableHighAccuracy: true,
@@ -91,7 +91,7 @@ export default function SearchBar({ onSearch, onUseLocation, loading, error }) {
         <div className="search-input-wrap">
           <input
             type="text"
-            placeholder="Search a city, town, or postcode"
+            placeholder="Search a country, state, district, city, or town"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={handleKeyDown}
@@ -118,7 +118,7 @@ export default function SearchBar({ onSearch, onUseLocation, loading, error }) {
               key={`${location.id}-${location.latitude}-${location.longitude}`}
               type="button"
               className="suggestion-item"
-              onClick={() => handleSearch(formatLocation(location))}
+              onClick={() => onUseLocation(location.latitude, location.longitude, formatLocation(location))}
             >
               <span>{location.name}</span>
               <small>{[location.admin1, location.country].filter(Boolean).join(", ")}</small>

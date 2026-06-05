@@ -32,6 +32,40 @@ const WEATHER_CODE_LABELS = {
 	99: "Thunderstorm with hail",
 };
 
+const ALLOWED_FEATURE_PREFIXES = ["ADM", "PPL", "PCL", "CONT"];
+
+function isAllowedLocation(location) {
+	const featureCode = String(location.feature_code ?? "");
+	return ALLOWED_FEATURE_PREFIXES.some((prefix) => featureCode.startsWith(prefix));
+}
+
+function rankLocation(location, query) {
+	const featureCode = String(location.feature_code ?? "");
+	const normalizedName = String(location.name ?? "").toLowerCase();
+	const normalizedQuery = query.toLowerCase();
+
+	let score = 0;
+
+	if (normalizedName === normalizedQuery) {
+		score += 100;
+	} else if (normalizedName.startsWith(normalizedQuery)) {
+		score += 60;
+	} else if (normalizedName.includes(normalizedQuery)) {
+		score += 30;
+	}
+
+	if (featureCode.startsWith("PPLC")) score += 50;
+	if (featureCode.startsWith("PPLA")) score += 40;
+	if (featureCode.startsWith("PPL")) score += 30;
+	if (featureCode.startsWith("ADM1")) score += 28;
+	if (featureCode.startsWith("ADM2")) score += 24;
+	if (featureCode.startsWith("ADM3")) score += 20;
+	if (featureCode.startsWith("ADM4")) score += 16;
+	if (featureCode.startsWith("PCL")) score += 14;
+
+	return score;
+}
+
 function buildForecastUrl(latitude, longitude) {
 	const url = new URL(OPEN_METEO_FORECAST_URL);
 
@@ -134,7 +168,11 @@ export async function searchLocations(query) {
 	url.searchParams.set("format", "json");
 
 	const data = await fetchJson(url);
-	return (data.results ?? []).map(toSearchResult);
+	return (data.results ?? [])
+		.filter(isAllowedLocation)
+		.sort((left, right) => rankLocation(right, trimmedQuery) - rankLocation(left, trimmedQuery))
+		.slice(0, 8)
+		.map(toSearchResult);
 }
 
 export async function fetchWeatherByLocation(location) {
@@ -200,4 +238,14 @@ export function getWeatherSummary(code) {
 	}
 
 	return "Mixed conditions";
+}
+
+export function getWeatherTheme(code) {
+	if ([0, 1].includes(code)) return "sunny";
+	if ([2, 3].includes(code)) return "cloudy";
+	if ([45, 48].includes(code)) return "foggy";
+	if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return "rainy";
+	if ([71, 73, 75, 77, 85, 86].includes(code)) return "snowy";
+	if ([95, 96, 99].includes(code)) return "stormy";
+	return "default";
 }
