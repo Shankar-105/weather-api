@@ -3,7 +3,6 @@
   padding: 0;
   box-sizing: border-box;
 }
-
 .app {
   min-height: 100vh;
   background-size: cover;
@@ -11,23 +10,18 @@
   background-repeat: no-repeat;
   
 }
-
 .app.default {
   background-image: url('https://static.vecteezy.com/system/resources/thumbnails/042/193/640/small/ai-generated-overcast-sky-background-free-photo.jpg');
 }
-
 .app.cold {
   background-image: url('https://img.magnific.com/free-photo/delicate-blue-frost-crystals_84443-73617.jpg?semt=ais_hybrid&w=740&q=80');
 }
-
 .app.normal {
   background-image: url('https://www.shutterstock.com/image-photo/unique-clouds-during-day-normal-260nw-2315540115.jpg');
 }
-
 .app.hot {
   background-image: url('https://thumbs.dreamstime.com/b/heat-wave-extreme-sun-sky-background-hot-weather-global-warming-concept-temperature-summer-season-148330905.jpg');
 }
-
 .overlay {
   min-height: 100vh;
   display: flex;

@@ -11,18 +11,18 @@ export default function Home() {
     <div className={`app ${getWeatherClass(temp)}`}>
       <div className="overlay">
         <h1 className="title">🌤 Weather App</h1>
-
         <SearchBar setTemp={setTemp} />
         <WeatherCard temp={temp} />
       </div>
     </div>
   );
 }
-
-// background logic to change the bg images according to the climate 
+// bg logic to change the bg images according to the climate
 function getWeatherClass(temp) {
   if (!temp) return "default";
-  if (temp < 15) return "cold";
-  if (temp <= 28) return "normal";
+  const t = parseInt(temp.temperature); // convertion "15°C" → 15
+  if (t < 15) return "cold";
+  if (t <= 28) return "normal";
   return "hot";
 }
+ 

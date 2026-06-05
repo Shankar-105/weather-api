@@ -1,8 +1,41 @@
-.card {
-  margin-top: 20px;
+.weather-card {
   background: rgba(255, 255, 255, 0.15);
-  color: white;
-  padding: 20px;
-  border-radius: 12px;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  padding: 2rem 2.5rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  color: #fff;
+}
+
+.weather-card.empty {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.weather-card .city-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.weather-card .temperature {
+  font-size: 4rem;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.weather-card .condition {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: capitalize;
+  margin-bottom: 0.5rem;
+}
+
+.weather-card .feels-like {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
 }
