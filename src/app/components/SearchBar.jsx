@@ -1,54 +1,132 @@
 "use client";
 
-import { useState } from "react";
-import "./SearchBar.css"
-export default function SearchBar({ setTemp }) {
-  const [city, setCity] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+import { useEffect, useState } from "react";
+import "./SearchBar.css";
 
-  async function handleSearch() {
-    if (!city.trim()) return;
+export default function SearchBar({ onSearch, onUseLocation, loading, error }) {
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [helperMessage, setHelperMessage] = useState("");
 
-    setLoading(true);
-    setError(null);
+  useEffect(() => {
+    const trimmedQuery = query.trim();
 
-    try {
-      const res = await fetch(`http://localhost:3000/weather?city=${city.trim()}`);
+    if (trimmedQuery.length < 2) {
+      const clearTimeoutId = window.setTimeout(() => {
+        setSuggestions([]);
+        setHelperMessage("");
+      }, 0);
 
-      const contentType = res.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Backend not running. Start NestJS: npm run start:dev");
+      return () => window.clearTimeout(clearTimeoutId);
+    }
+
+    const timeoutId = window.setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/weather?mode=search&query=${encodeURIComponent(trimmedQuery)}`, {
+          cache: "no-store",
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Unable to search locations");
+        }
+
+        setSuggestions(data.results ?? []);
+        setHelperMessage(data.results?.length ? "Select a match or press Enter for the top result." : "No matches yet.");
+      } catch {
+        setSuggestions([]);
+        setHelperMessage("No matches yet.");
       }
+    }, 250);
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "City not found");
+    return () => window.clearTimeout(timeoutId);
+  }, [query]);
 
-      setTemp(data);
-    } catch (err) {
-      setError(err.message);
-      setTemp(null);
-    } finally {
-      setLoading(false);
+  function formatLocation(location) {
+    return [location.name, location.admin1, location.country].filter(Boolean).join(", ");
+  }
+
+  async function handleSearch(targetQuery = query) {
+    const trimmedQuery = targetQuery.trim();
+
+    if (!trimmedQuery) {
+      return;
+    }
+
+    setSuggestions([]);
+    await onSearch(trimmedQuery);
+  }
+
+  function handleUseLocation() {
+    if (!navigator.geolocation) {
+      setHelperMessage("Your browser does not support location sharing.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        onUseLocation(position.coords.latitude, position.coords.longitude);
+      },
+      () => {
+        setHelperMessage("Allow location access in the browser prompt to use your current position.");
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      }
+    );
+  }
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleSearch(suggestions[0] ? formatLocation(suggestions[0]) : query);
     }
   }
 
-  function handleKeyDown(e) {
-    if (e.key === "Enter") handleSearch();
-  }
-
   return (
-    <div className="search-bar">
-      <input
-        type="text"
-        placeholder="Enter city name..."
-        value={city}
-        onChange={(e) => setCity(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-      <button onClick={handleSearch} disabled={loading}>
-        {loading ? "Searching..." : "Search"}
-      </button>
+    <div className="search-bar-shell">
+      <div className="search-row">
+        <div className="search-input-wrap">
+          <input
+            type="text"
+            placeholder="Search a country, state, district, city, or town"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            onKeyDown={handleKeyDown}
+            aria-label="Search location"
+          />
+        </div>
+
+        <button className="primary-action" onClick={() => handleSearch()} disabled={loading}>
+          {loading ? "Loading..." : "Search"}
+        </button>
+      </div>
+
+      <div className="search-actions">
+        <button className="ghost-action" onClick={handleUseLocation} disabled={loading}>
+          Use my location
+        </button>
+        {helperMessage && <span className="status-pill">{helperMessage}</span>}
+      </div>
+
+      {suggestions.length > 0 && (
+        <div className="suggestion-panel">
+          {suggestions.map((location) => (
+            <button
+              key={`${location.id}-${location.latitude}-${location.longitude}`}
+              type="button"
+              className="suggestion-item"
+              onClick={() => onUseLocation(location.latitude, location.longitude, formatLocation(location))}
+            >
+              <span>{location.name}</span>
+              <small>{[location.admin1, location.country].filter(Boolean).join(", ")}</small>
+            </button>
+          ))}
+        </div>
+      )}
+
       {error && <p className="error">{error}</p>}
     </div>
   );
