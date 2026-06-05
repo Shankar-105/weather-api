@@ -3,31 +3,108 @@
   padding: 0;
   box-sizing: border-box;
 }
-.app {
+
+:root {
+  color-scheme: dark;
+  --page-bg: #07111f;
+  --page-bg-2: #0b1d33;
+  --page-accent: #77d6ff;
+  --text-main: #f4f7fb;
+  --text-muted: rgba(244, 247, 251, 0.72);
+}
+
+html,
+body {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(119, 214, 255, 0.14), transparent 36%),
+    radial-gradient(circle at top right, rgba(100, 163, 255, 0.18), transparent 30%),
+    linear-gradient(160deg, var(--page-bg) 0%, var(--page-bg-2) 100%);
+  color: var(--text-main);
+  font-family: var(--font-geist-sans);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), transparent 85%);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.app-shell {
   min-height: 100vh;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  padding: 2rem;
 }
-.app.default {
-  background-image: url('https://static.vecteezy.com/system/resources/thumbnails/042/193/640/small/ai-generated-overcast-sky-background-free-photo.jpg');
+
+.hero-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 760px);
+  gap: 1.5rem;
+  align-items: end;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 32px;
+  background: rgba(8, 12, 22, 0.42);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 80px rgba(2, 6, 23, 0.22);
 }
-.app.cold {
-  background-image: url('https://img.magnific.com/free-photo/delicate-blue-frost-crystals_84443-73617.jpg?semt=ais_hybrid&w=740&q=80');
-}
-.app.normal {
-  background-image: url('https://www.shutterstock.com/image-photo/unique-clouds-during-day-normal-260nw-2315540115.jpg');
-}
-.app.hot {
-  background-image: url('https://thumbs.dreamstime.com/b/heat-wave-extreme-sun-sky-background-hot-weather-global-warming-concept-temperature-summer-season-148330905.jpg');
-}
-.overlay {
-  min-height: 100vh;
+
+.hero-copy {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.5rem;
-  background: rgba(0, 0, 0, 0.35);
+  gap: 1rem;
+}
+
+.eyebrow {
+  color: var(--page-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.hero-copy h1 {
+  font-size: clamp(2.4rem, 5vw, 5.3rem);
+  line-height: 0.95;
+  letter-spacing: -0.07em;
+  max-width: 12ch;
+}
+
+.hero-text {
+  max-width: 56ch;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+@media (max-width: 960px) {
+  .app-shell {
+    padding: 1rem;
+  }
+
+  .hero-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    gap: 1rem;
+  }
+
+  .hero-panel {
+    padding: 1rem;
+    border-radius: 24px;
+  }
 }
